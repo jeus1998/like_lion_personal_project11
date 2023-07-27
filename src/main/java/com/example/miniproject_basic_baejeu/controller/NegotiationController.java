@@ -20,6 +20,7 @@ public class NegotiationController {
     // 이때 반드시 포함되어야 하는 내용은 대상 물품, 제안 가격, 작성자이다. 구매 제안을 등록할 때, 비밀번호 항목을 추가해서 등록한다.
     // 즉 반드시 포함되어야 하는 내용은 대상 물품, 제안 가격, 작성자, 비밀 번호이다.
     // 구매 제안이 등록될 때, 제안의 상태는 제안 상태가 된다
+
     @PostMapping
     public ResponseDto create(@PathVariable("itemId")Long itemId,
                                  @Valid @RequestBody NegotiationDto dto){

@@ -12,9 +12,7 @@ public class NegotiationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @NonNull
-
     private Long itemId;
 
     @NonNull
@@ -28,6 +26,5 @@ public class NegotiationEntity {
     private String password;
 
     public NegotiationEntity() {
-
     }
 }

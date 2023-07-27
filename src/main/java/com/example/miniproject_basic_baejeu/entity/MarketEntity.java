@@ -30,7 +30,6 @@ public class MarketEntity {
 
     @NonNull
     private String writer; // 작성자
-
     @NonNull
     private String password; // 비밀번호
 

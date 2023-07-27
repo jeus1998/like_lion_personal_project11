@@ -27,13 +27,15 @@ public class CommentController {
       response.setMessage("댓글이 등록되었습니다.");
       return response;
     }
+
+
     // 2. 등록된 댓글은 누구든지 열람할 수 있다. GET
     // 페이지 단위 조회가 가능하다.
     @GetMapping
     public Page<CommentDto> readPage(
             @PathVariable("itemId") Long itemId,
-            @RequestParam(value = "page", defaultValue = "0") Long page, // 조회 페이지
-            @RequestParam(value = "limit", defaultValue = "5") Long limit // 한페이지당 리미트
+            @RequestParam(value = "page", defaultValue = "0") Long page,
+            @RequestParam(value = "limit", defaultValue = "10") Long limit
     ){
         return commentService.readCommentAll(itemId, page, limit);
     }

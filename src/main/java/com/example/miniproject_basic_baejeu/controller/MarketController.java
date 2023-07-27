@@ -21,7 +21,7 @@ public class MarketController {
 
     // POST create Market
     // 1. 누구든지 중고 거래 목적으로 물품에 대한 정보를 등록할 수 있다.
-    // 필수 포함 목록 :  제목, 설명, 최소 가격, 작성자, 비밀번호   유효성 검사 항목에서 제약조건 넣기
+    // 필수 포함 목록 : 제목, 설명, 최소 가격, 작성자, 비밀번호 유효성 검사 항목에서 제약조건 넣기
     // 최초로 물품이 등록될 때 중고 물품의 상태 STATUS 는 판매중 상태가 된다.
     @PostMapping
     public ResponseDto create(@Valid @RequestBody MarketDto dto){

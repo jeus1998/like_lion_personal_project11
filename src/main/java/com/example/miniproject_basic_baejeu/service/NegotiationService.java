@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class NegotiationService {
@@ -43,6 +42,8 @@ public class NegotiationService {
     }
     public Page<NegotiationDto> masterService (Long itemId, NegotiationDto dto, Long page, Long limit){
         Optional<MarketEntity> checkEntity = marketRepository.findById(itemId);
+        if (checkEntity.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         MarketEntity WriterPassword = checkEntity.get();
         if ((WriterPassword.getPassword().equals(dto.getPassword())) && (WriterPassword.getWriter().equals(dto.getWriter()))){
@@ -83,7 +84,7 @@ public class NegotiationService {
         int endIndex = Math.min(startIndex + Math.toIntExact(pageable.getPageSize()),  EntityList.size());
         List<NegotiationEntity> pagedEntityList =  EntityList.subList(startIndex, endIndex); // 현재 페이지에 해당하는 부분을 추출하기
 
-        List<NegotiationDto> NegotiationDtoList = new ArrayList<>(); //
+        List<NegotiationDto> NegotiationDtoList = new ArrayList<>();
         for (NegotiationEntity target : pagedEntityList) {
             NegotiationDtoList.add(NegotiationDto.fromEntity(target));
         }
@@ -148,9 +149,6 @@ public class NegotiationService {
         }
     }
     // 삭제
-
-
-
     public void delete(Long proposalId, NegotiationCheckDto dto){
         Optional<NegotiationEntity> entityOptional = negotiationRepository.findById(proposalId);
         if (entityOptional.isEmpty())
@@ -161,4 +159,5 @@ public class NegotiationService {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
+
 }

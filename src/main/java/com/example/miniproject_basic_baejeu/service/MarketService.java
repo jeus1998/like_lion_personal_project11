@@ -32,8 +32,7 @@ public class MarketService {
         marketEntity.setMin_price_wanted(dto.getMin_price_wanted());
         marketEntity.setWriter(dto.getWriter());
         marketEntity.setPassword(dto.getPassword());
-
-        return MarketDto.fromEntity(marketRepository.save(marketEntity));
+       return MarketDto.fromEntity(marketRepository.save(marketEntity));
     }
     // 전체 페이징 조회
     public Page<MarketDto> readMarketAll(Long page, Long limit) {
