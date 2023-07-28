@@ -23,14 +23,16 @@ public class CommentService {
     public final MarketRepository marketRepository;
     public final CommentRepository commentRepository;
     public CommentDto createComment(Long itemId, CommentDto dto) {
-        if (!marketRepository.existsById(itemId))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); // 해당 id가 없으면 not found반환
+        Optional<MarketEntity> optionalMarket = marketRepository.findById(itemId);
+        if (optionalMarket.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        MarketEntity marketEntity = optionalMarket.get();
         CommentEntity entity = new CommentEntity();
-        entity.setItem_id(itemId);
         entity.setWriter(dto.getWriter());
         entity.setPassword(dto.getPassword());
         entity.setContent(dto.getContent());
-        // entity.setReply(dto.getReply());
+        entity.setSalesItem(marketEntity); // 연관된 MarketEntity 설정
         return CommentDto.fromEntity(commentRepository.save(entity));
     }
     public Page<CommentDto> readCommentAll(Long itemId, Long page, Long limit) {
@@ -40,7 +42,7 @@ public class CommentService {
         List<CommentEntity> commentEntityList = commentRepository.findAll();
         List<CommentEntity> filteredCommentEntityList = new ArrayList<>();
         for (CommentEntity comment : commentEntityList) {
-            if (comment.getItem_id() == itemId) {
+            if (comment.getSalesItem().getId() == itemId) {
                 filteredCommentEntityList.add(comment);
             }
         }
@@ -62,7 +64,7 @@ public class CommentService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             CommentEntity commentEntity = optionalComment.get();
-            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getItem_id()) {
+            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getSalesItem().getId()) {
                 commentEntity.setWriter(dto.getWriter());
                 commentEntity.setPassword(dto.getPassword());
                 commentEntity.setContent(dto.getContent());
@@ -77,7 +79,7 @@ public class CommentService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             CommentEntity commentEntity = optionalComment.get();
-            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getItem_id()) {
+            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getSalesItem().getId()) {
                 commentRepository.deleteById(commentsId);
             }
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -88,7 +90,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         CommentEntity commentEntity = optionalComment.get();
-        Optional<MarketEntity> optionalMarket = marketRepository.findById(commentEntity.getItem_id()); // item_id
+        Optional<MarketEntity> optionalMarket = marketRepository.findById(commentEntity.getSalesItem().getId()); // item_id
         MarketEntity marketEntity = optionalMarket.get();
         if (!password.equals(marketEntity.getPassword())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

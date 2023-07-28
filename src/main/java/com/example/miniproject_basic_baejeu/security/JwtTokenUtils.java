@@ -1,6 +1,5 @@
 package com.example.miniproject_basic_baejeu.security;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

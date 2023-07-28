@@ -3,6 +3,9 @@ package com.example.miniproject_basic_baejeu.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // Spring에 저장하고 싶은 사용자 정보
 
 @Entity
@@ -27,5 +30,12 @@ public class UserEntity {
     // 토큰 발행후 들어간다.
     private String token; // 토큰
 
-    // 토큰
+    @OneToMany(mappedBy = "user")
+    private List<MarketEntity> salesItemEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentEntity> commentEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<NegotiationEntity> negotiationEntityList = new ArrayList<>();
 }

@@ -16,7 +16,7 @@ public class NegotiationDto {
     public static NegotiationDto fromEntity(NegotiationEntity entity){
         NegotiationDto dto = new NegotiationDto();
         dto.setId(entity.getId());
-        dto.setItem_id(entity.getItemId());
+        //dto.setItem_id(entity.getItemId());
         dto.setSuggested_price(entity.getSuggested_price());
         dto.setStatus(entity.getStatus());
         dto.setWriter(entity.getWriter());

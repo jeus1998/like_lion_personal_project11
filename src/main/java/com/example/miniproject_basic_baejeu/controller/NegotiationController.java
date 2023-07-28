@@ -58,7 +58,6 @@ public class NegotiationController {
     }
     // 3. 등록된 제안은 수정이 가능하다.
     // 이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.
-
     // 5. 대상 물품의 주인은 구매 제안을 수락할 수 있다.
     // 이를 위해서 제안의 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.
     // 이때 구매 제안의 상태는 수락이 된다.
@@ -70,6 +69,7 @@ public class NegotiationController {
     // 이때 구매 제안의 상태는 확정 상태가 된다.
     // 구매 제안이 확정될 경우, 대상 물품의 상태는 판매 완료가 된다.
     // 구매 제안이 확정될 경우, 확정되지 않은 다른 구매 제안의 상태는 모두 거절이 된다.
+
     @PutMapping("/{proposalId}")
     public ResponseDto update(@PathVariable("proposalId") Long proposalId, @RequestBody NegotiationDto dto){
         ResponseDto response = new ResponseDto();

@@ -20,7 +20,7 @@ public class CommentDto {
     public static CommentDto fromEntity(CommentEntity entity){
         CommentDto dto = new CommentDto();
         dto.setId(entity.getId());
-        dto.setItem_id(entity.getItem_id());
+        // dto.setItem_id(entity.getItem_id());
         dto.setWriter(entity.getWriter());
         dto.setPassword(entity.getPassword());
         dto.setContent(entity.getContent());

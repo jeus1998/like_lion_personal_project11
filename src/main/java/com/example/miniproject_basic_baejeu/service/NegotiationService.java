@@ -28,16 +28,17 @@ public class NegotiationService {
     public final CommentRepository commentRepository;
     public final NegotiationRepository negotiationRepository;
     public NegotiationDto createNegotiation( NegotiationDto dto, Long itemId){
-        if (!marketRepository.existsById(itemId))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); // 해당 id가 없으면 not found반환
-
+        Optional<MarketEntity> optionalMarket = marketRepository.findById(itemId);
+        if (optionalMarket.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        MarketEntity marketEntity = optionalMarket.get();
         NegotiationEntity entity = new NegotiationEntity();
-        entity.setItemId(itemId);
         entity.setSuggested_price(dto.getSuggested_price());
         entity.setWriter(dto.getWriter());
         entity.setPassword(dto.getPassword());
         entity.setStatus("제안 상태");
-
+        entity.setSalesItem(marketEntity);
         return NegotiationDto.fromEntity(negotiationRepository.save(entity));
     }
     public Page<NegotiationDto> masterService (Long itemId, NegotiationDto dto, Long page, Long limit){
@@ -54,7 +55,7 @@ public class NegotiationService {
             List<NegotiationEntity> EntityList = negotiationRepository.findAll();
             List<NegotiationEntity> filteredEntityList = new ArrayList<>();
             for (NegotiationEntity target : EntityList) {
-                if (target.getItemId() == itemId) {
+                if (target.getSalesItem().getId() == itemId) {
                     filteredEntityList.add(target);
                 }
             }
@@ -97,7 +98,7 @@ public class NegotiationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         NegotiationEntity negotiationEntity = entityOptional.get();
-        Long item_id = negotiationEntity.getItemId();
+        Long item_id = negotiationEntity.getSalesItem().getId();
         Long id = negotiationEntity.getId();
         if (dto.getStatus() == null) { // 4 단순 가격 수정
             if ((negotiationEntity.getPassword().equals(dto.getPassword())) && (negotiationEntity.getWriter().equals(dto.getWriter()))) {

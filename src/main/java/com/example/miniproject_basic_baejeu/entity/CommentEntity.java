@@ -13,8 +13,9 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
-    private Long item_id;
+
+   /* @NonNull
+    private Long item_id;*/
     @NonNull
     private String writer;
     @NonNull
@@ -26,4 +27,10 @@ public class CommentEntity {
     public CommentEntity() {
 
     }
+    @ManyToOne(fetch = FetchType.EAGER)
+    private MarketEntity salesItem;  // SalesItem ID
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserEntity user;
+
+
 }

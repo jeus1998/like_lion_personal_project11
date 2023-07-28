@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -73,8 +74,8 @@ public class MarketController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseDto updateImage(@RequestParam("password") String password,
-                                 @PathVariable("itemId") Long id,
-                                 @RequestParam("image") MultipartFile Image
+                                   @PathVariable("itemId") Long id,
+                                   @RequestParam("image") MultipartFile Image
     ){
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage("이미지가 등록되었습니다.");

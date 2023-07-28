@@ -12,8 +12,9 @@ public class NegotiationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
-    private Long itemId;
+
+    // @NonNull
+    // private Long itemId;
 
     @NonNull
     private Long suggested_price;
@@ -27,4 +28,9 @@ public class NegotiationEntity {
 
     public NegotiationEntity() {
     }
+    @ManyToOne(fetch = FetchType.EAGER)
+    private MarketEntity salesItem;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserEntity user;
 }

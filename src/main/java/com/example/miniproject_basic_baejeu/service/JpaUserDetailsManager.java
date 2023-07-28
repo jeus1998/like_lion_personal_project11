@@ -35,6 +35,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
                 .username("user")
                 .password(passwordEncoder.encode("asdf"))
                 .email("user@gmail.com")
+                .phone("010-1234-5678")
+                .address("광주-북구")
                 .build());
     }
 
