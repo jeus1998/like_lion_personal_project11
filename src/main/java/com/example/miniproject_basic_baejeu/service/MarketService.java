@@ -2,13 +2,16 @@ package com.example.miniproject_basic_baejeu.service;
 
 import com.example.miniproject_basic_baejeu.dto.MarketDto;
 import com.example.miniproject_basic_baejeu.entity.MarketEntity;
+import com.example.miniproject_basic_baejeu.entity.UserEntity;
 import com.example.miniproject_basic_baejeu.repository.MarketRepository;
+import com.example.miniproject_basic_baejeu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,14 +20,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MarketService {
 
     private final MarketRepository marketRepository;
-    public MarketDto createMarket(MarketDto dto){
+    private final UserRepository userRepository;
+    public MarketDto createMarket(MarketDto dto, Authentication authentication){
+        String currentUser = authentication.getName();
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(currentUser);
+        UserEntity user = optionalUser.get();
         MarketEntity marketEntity = new MarketEntity();
         marketEntity.setStatus("판매중");
         marketEntity.setTitle(dto.getTitle());
@@ -32,6 +38,7 @@ public class MarketService {
         marketEntity.setMin_price_wanted(dto.getMin_price_wanted());
         marketEntity.setWriter(dto.getWriter());
         marketEntity.setPassword(dto.getPassword());
+        marketEntity.setUser(user);
        return MarketDto.fromEntity(marketRepository.save(marketEntity));
     }
     // 전체 페이징 조회
@@ -50,13 +57,13 @@ public class MarketService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
     // 업데이트
-    public MarketDto updateMarket(MarketDto dto, Long id) {
+    public MarketDto updateMarket(MarketDto dto, Long id, Authentication authentication) {
         Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         MarketEntity marketEntity = optionalMarket.get(); // 어떤 내용을 업데이트 하고싶은지 모른다.
-        if (!dto.getPassword().equals(marketEntity.getPassword())) {
+        if (!authentication.getName().equals(marketEntity.getUser().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         marketEntity.setPassword(dto.getPassword() != null ? dto.getPassword() : marketEntity.getPassword());
@@ -71,24 +78,24 @@ public class MarketService {
     }
 
     // 삭제
-    public void deleteMarket(MarketDto dto, Long id){
+    public void deleteMarket(MarketDto dto, Long id, Authentication authentication){
         Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         MarketEntity marketEntity = optionalMarket.get();
-        if ((dto.getPassword().equals(marketEntity.getPassword())) && (dto.getWriter().equals(marketEntity.getWriter()))){
+        if (authentication.getName().equals(marketEntity.getUser().getUsername())) {
             marketRepository.deleteById(id);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
-    public MarketDto updateMarketImage(String password,  MultipartFile Image, Long id ){
+    public MarketDto updateMarketImage(String password,  MultipartFile Image, Long id ,Authentication authentication ){
         Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         MarketEntity marketEntity = optionalMarket.get();
-        if (!(password.equals(marketEntity.getPassword())) ) {
+        if (!authentication.getName().equals(marketEntity.getUser().getUsername()) ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         else {
