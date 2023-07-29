@@ -13,18 +13,10 @@ public class NegotiationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // @NonNull
-    // private Long itemId;
-
     @NonNull
     private Long suggested_price;
 
     private String status;
-
-    @NonNull
-    private String writer;
-    @NonNull
-    private String password;
 
     public NegotiationEntity() {
     }

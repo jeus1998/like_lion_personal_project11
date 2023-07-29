@@ -13,8 +13,6 @@ public class MarketDto {
     private String image_url;
     private Long min_price_wanted;
     private String status;
-    private String writer;
-    private String password;
 
     public static MarketDto fromEntity(MarketEntity entity){
         MarketDto dto = new MarketDto();
@@ -24,8 +22,6 @@ public class MarketDto {
         dto.setImage_url(entity.getImage_url());
         dto.setMin_price_wanted(entity.getMin_price_wanted());
         dto.setStatus(entity.getStatus());
-        dto.setWriter(entity.getWriter());
-        dto.setPassword(entity.getPassword());
         return dto;
     }
 }

@@ -36,8 +36,6 @@ public class MarketService {
         marketEntity.setTitle(dto.getTitle());
         marketEntity.setDescription(dto.getDescription());
         marketEntity.setMin_price_wanted(dto.getMin_price_wanted());
-        marketEntity.setWriter(dto.getWriter());
-        marketEntity.setPassword(dto.getPassword());
         marketEntity.setUser(user);
        return MarketDto.fromEntity(marketRepository.save(marketEntity));
     }
@@ -66,10 +64,8 @@ public class MarketService {
         if (!authentication.getName().equals(marketEntity.getUser().getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        marketEntity.setPassword(dto.getPassword() != null ? dto.getPassword() : marketEntity.getPassword());
         marketEntity.setTitle(dto.getTitle() != null ? dto.getTitle() : marketEntity.getTitle());
         marketEntity.setDescription(dto.getDescription() != null ? dto.getDescription() : marketEntity.getDescription());
-        marketEntity.setWriter(dto.getWriter() != null ? dto.getWriter() : marketEntity.getWriter());
         marketEntity.setMin_price_wanted(dto.getMin_price_wanted() != null ? dto.getMin_price_wanted() : marketEntity.getMin_price_wanted());
         marketEntity.setImage_url(dto.getImage_url() != null ? dto.getImage_url() : marketEntity.getImage_url());
         marketEntity.setStatus(dto.getStatus() != null ? "판매중" : marketEntity.getStatus());
@@ -78,7 +74,7 @@ public class MarketService {
     }
 
     // 삭제
-    public void deleteMarket(MarketDto dto, Long id, Authentication authentication){
+    public void deleteMarket(Long id, Authentication authentication){
         Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -89,7 +85,7 @@ public class MarketService {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
-    public MarketDto updateMarketImage(String password,  MultipartFile Image, Long id ,Authentication authentication ){
+    public MarketDto updateMarketImage(MultipartFile Image, Long id ,Authentication authentication ){
         Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
         if (optionalMarket.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 public interface NegotiationRepository extends JpaRepository<NegotiationEntity, Long> {
-    List<NegotiationEntity> findByPasswordAndWriter(String password, String writer);
+
     @Query("SELECT n FROM NegotiationEntity n " +
             "JOIN n.salesItem m " +
             "WHERE n.status = :status AND m.id = :itemId")

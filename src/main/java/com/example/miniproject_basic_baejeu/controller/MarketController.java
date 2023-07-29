@@ -62,10 +62,10 @@ public class MarketController {
     // DELETE
     // 5. 등록된 물품 정보는 삭제가 가능하다. // 이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야한다.
     @DeleteMapping("/{itemId}")
-    public ResponseDto delete (@RequestBody MarketDto dto,    // 1. Writer랑 password를 받는 전용 dto를 만든다. 즉 클레스 생성 2.기존의 dto를 사용한다. 22
+    public ResponseDto delete (
                                @PathVariable("itemId") Long id,
                                Authentication authentication){
-        service.deleteMarket(dto, id, authentication);
+        service.deleteMarket(id, authentication);
         ResponseDto response = new ResponseDto();
         response.setMessage("물품을 삭제했습니다.");
         return response;
@@ -76,14 +76,14 @@ public class MarketController {
             value= "/image/{itemId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseDto updateImage(@RequestParam("password") String password,
+    public ResponseDto updateImage(
                                    @PathVariable("itemId") Long id,
                                    @RequestParam("image") MultipartFile Image,
                                    Authentication authentication
     ){
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage("이미지가 등록되었습니다.");
-        service.updateMarketImage(password, Image , id, authentication);
+        service.updateMarketImage(Image , id, authentication);
         return responseDto;
     }
 }

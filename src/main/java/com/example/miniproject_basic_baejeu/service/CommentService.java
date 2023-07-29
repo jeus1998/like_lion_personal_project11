@@ -3,14 +3,17 @@ package com.example.miniproject_basic_baejeu.service;
 import com.example.miniproject_basic_baejeu.dto.CommentDto;
 import com.example.miniproject_basic_baejeu.entity.CommentEntity;
 import com.example.miniproject_basic_baejeu.entity.MarketEntity;
+import com.example.miniproject_basic_baejeu.entity.UserEntity;
 import com.example.miniproject_basic_baejeu.repository.CommentRepository;
 import com.example.miniproject_basic_baejeu.repository.MarketRepository;
+import com.example.miniproject_basic_baejeu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
@@ -22,17 +25,20 @@ import java.util.Optional;
 public class CommentService {
     public final MarketRepository marketRepository;
     public final CommentRepository commentRepository;
-    public CommentDto createComment(Long itemId, CommentDto dto) {
+    public final UserRepository userRepository;
+    public CommentDto createComment(Long itemId, CommentDto dto, Authentication authentication) {
         Optional<MarketEntity> optionalMarket = marketRepository.findById(itemId);
         if (optionalMarket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        String currentUser = authentication.getName();
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(currentUser);
+        UserEntity user = optionalUser.get();
         MarketEntity marketEntity = optionalMarket.get();
         CommentEntity entity = new CommentEntity();
-        entity.setWriter(dto.getWriter());
-        entity.setPassword(dto.getPassword());
         entity.setContent(dto.getContent());
         entity.setSalesItem(marketEntity); // 연관된 MarketEntity 설정
+        entity.setUser(user);
         return CommentDto.fromEntity(commentRepository.save(entity));
     }
     public Page<CommentDto> readCommentAll(Long itemId, Long page, Long limit) {
@@ -57,48 +63,41 @@ public class CommentService {
         }
         return new PageImpl<>(commentDtoList, pageable, filteredCommentEntityList.size());
     }
-    // update itemid , password , commentid 모두 정확하게 요청해야 업데이트 가능
-    public CommentDto updateComment(Long itemId, Long commentsId, String password, CommentDto dto) {
+    public CommentDto updateComment(Long itemId, Long commentsId, Authentication authentication, CommentDto dto) {
             Optional<CommentEntity> optionalComment = commentRepository.findById(commentsId);
             if (optionalComment.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             CommentEntity commentEntity = optionalComment.get();
-            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getSalesItem().getId()) {
-                commentEntity.setWriter(dto.getWriter());
-                commentEntity.setPassword(dto.getPassword());
+            if (authentication.getName().equals(commentEntity.getUser().getUsername()) && itemId == commentEntity.getSalesItem().getId()) {
                 commentEntity.setContent(dto.getContent());
                 commentEntity.setReply(dto.getReply());
                 return CommentDto.fromEntity(commentRepository.save(commentEntity));
             }
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-    public void deleteComment(Long itemId, Long commentsId, String password) {
+    public void deleteComment(Long itemId, Long commentsId, Authentication authentication) {
         Optional<CommentEntity> optionalComment = commentRepository.findById(commentsId);
             if (optionalComment.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             CommentEntity commentEntity = optionalComment.get();
-            if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getSalesItem().getId()) {
+            if (authentication.getName().equals(commentEntity.getUser().getUsername()) && itemId == commentEntity.getSalesItem().getId()) {
                 commentRepository.deleteById(commentsId);
             }
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
-    public CommentDto updateReply(Long itemId, Long commentsId, String password, CommentDto dto){
+    public CommentDto updateReply(Long itemId, Long commentsId, Authentication authentication, CommentDto dto){
         Optional<CommentEntity> optionalComment = commentRepository.findById(commentsId); // 댓글 id
         if (optionalComment.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         CommentEntity commentEntity = optionalComment.get();
-        Optional<MarketEntity> optionalMarket = marketRepository.findById(commentEntity.getSalesItem().getId()); // item_id
-        MarketEntity marketEntity = optionalMarket.get();
-        if (!password.equals(marketEntity.getPassword())){
+        if (!authentication.getName().equals(commentEntity.getUser().getUsername()) && itemId == commentEntity.getSalesItem().getId()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         commentEntity.setReply(dto.getReply());
+        commentEntity.setContent(commentEntity.getContent());
         return CommentDto.fromEntity(commentRepository.save(commentEntity));
     }
 }
-
-/*
- */
