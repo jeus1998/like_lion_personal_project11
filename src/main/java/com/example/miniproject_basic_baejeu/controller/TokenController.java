@@ -7,14 +7,12 @@ import com.example.miniproject_basic_baejeu.security.JwtTokenDto;
 import com.example.miniproject_basic_baejeu.security.JwtTokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -70,6 +68,12 @@ public class TokenController {
                     .build());
         }
         return dto;
+    }
+    // 현재 로그인한 User 정보를 확인하기 위한 메서드
+    @GetMapping("/check")
+    public String checkUser(Authentication authentication){
+        String check = authentication.getName();
+        return check;
     }
 
 }

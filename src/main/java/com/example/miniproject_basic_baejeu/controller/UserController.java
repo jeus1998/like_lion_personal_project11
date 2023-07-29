@@ -56,7 +56,7 @@ public class UserController {
         // repository에 token 저장
         Optional<UserEntity> optionalUser = repository.findByUsername(check);
         UserEntity entity = optionalUser.get();
-        entity.setToken(token);
+        // entity.setToken(token);
         repository.save(entity);
 
         JwtTokenDto dto = new JwtTokenDto();
