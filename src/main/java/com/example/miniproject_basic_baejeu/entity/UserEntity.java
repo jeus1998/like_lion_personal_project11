@@ -27,9 +27,6 @@ public class UserEntity {
     private String email; // 이메일
     private String phone; // 전화번호
 
-    // 토큰 발행후 들어간다.
-    private String token; // 토큰
-
     @OneToMany(mappedBy = "user")
     private List<MarketEntity> salesItemEntityList = new ArrayList<>();
 
