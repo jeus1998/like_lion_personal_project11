@@ -93,7 +93,8 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         CommentEntity commentEntity = optionalComment.get();
-        if (!authentication.getName().equals(commentEntity.getUser().getUsername()) && itemId == commentEntity.getSalesItem().getId()){
+        // 물품의 주인이 맞아야 답글 다는게 가능하다.
+        if (!authentication.getName().equals(commentEntity.getSalesItem().getUser().getUsername()) && itemId == commentEntity.getSalesItem().getId()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         commentEntity.setReply(dto.getReply());
