@@ -44,8 +44,7 @@ public class WebSecurityConfig {
                                 )
                                 .permitAll()
                                 .requestMatchers(
-                                        HttpMethod.GET, "/items", "/items/**"
-
+                                        HttpMethod.GET, "/items", "/items/{itemId}", "/items/{itemId}/comments"
                                 ).permitAll()
                                 .anyRequest()
                                 .authenticated()

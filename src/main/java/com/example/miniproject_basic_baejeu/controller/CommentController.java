@@ -32,6 +32,7 @@ public class CommentController {
 
     // 2. 등록된 댓글은 누구든지 열람할 수 있다. GET
     // 페이지 단위 조회가 가능하다.
+    // 해당 아이템에 대한 모든 댓글 조회 기능
     @GetMapping
     public Page<CommentDto> readPage(
             @PathVariable("itemId") Long itemId,

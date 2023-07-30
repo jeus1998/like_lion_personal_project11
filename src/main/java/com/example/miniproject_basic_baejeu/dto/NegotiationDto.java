@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class NegotiationDto {
     private Long id;
-    private Long item_id;
     private Long suggested_price;
     private String status;
+    private Long item_id;
 
 
     public static NegotiationDto fromEntity(NegotiationEntity entity){
@@ -17,6 +17,7 @@ public class NegotiationDto {
         dto.setId(entity.getId());
         dto.setSuggested_price(entity.getSuggested_price());
         dto.setStatus(entity.getStatus());
+        dto.setItem_id(entity.getSalesItem().getId());
         return dto;
     }
 }

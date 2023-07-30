@@ -38,17 +38,27 @@ public class NegotiationController {
     // 등록한 사용자는, 조회를 위해서 자신이 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
     // 지금까지는 비밀번호 첨부를 url을 통해서 했는데 이제는 requestBody에 실어서 첨부해보겠당
     // 조회시 sales_item writer and password 첨부해야한다. 자신이 등록한 아이템 모든 제안 페이지 지원
+
+    // 현재 사용자가 올린 제안들 확인
     @GetMapping
     public Page<NegotiationDto> search (
             Authentication authentication,
-            @RequestParam(value = "page", defaultValue = "0") Long page, // 조회 페이지 시작 페이지 0부터 시작 쿼리파람
-            @RequestParam(value = "limit", defaultValue = "5") Long limit // 한페이지당 리미트
+            @RequestParam(value = "page", defaultValue = "0") Long page,
+            @RequestParam(value = "limit", defaultValue = "5") Long limit
 
     ){
         return negotiationService.search(authentication, page, limit);
     }
-    // negotiation writer and password 자신이 등록한 구매 제안 다른 아이템에도 등록 제안이 가능하다 페이지 지원
-    // RequestParam 이용하기
+
+    @GetMapping("/owner")
+    public Page<NegotiationDto> ownersearch (
+            Authentication authentication,
+            @RequestParam(value = "page", defaultValue = "0") Long page, // 조회 페이지 시작 페이지 0부터 시작 쿼리파람
+            @RequestParam(value = "limit", defaultValue = "5") Long limit // 한페이지당 리미트
+    ){
+        return negotiationService.ownersearch(authentication, page, limit);
+    }
+
 
     // 3. 등록된 제안은 수정이 가능하다.
     // 이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.

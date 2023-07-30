@@ -10,6 +10,7 @@ import com.example.miniproject_basic_baejeu.repository.MarketRepository;
 import com.example.miniproject_basic_baejeu.repository.NegotiationRepository;
 import com.example.miniproject_basic_baejeu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NegotiationService {
 
     public final MarketRepository marketRepository;
@@ -46,6 +48,8 @@ public class NegotiationService {
         entity.setUser(user);
         return NegotiationDto.fromEntity(negotiationRepository.save(entity));
     }
+
+    // 현재 사용자가 올린 제안들 확인
     public Page<NegotiationDto> search (Authentication authentication, Long page, Long limit){
 
         List<NegotiationEntity> EntityList = negotiationRepository.findAll();
@@ -68,6 +72,31 @@ public class NegotiationService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
+
+    // 현재 사용자가 주인인 물품들 제안 확인
+    public Page<NegotiationDto> ownersearch (Authentication authentication, Long page, Long limit){
+
+        List<NegotiationEntity> EntityList = negotiationRepository.findAll();
+        List<NegotiationEntity> filteredEntityList = new ArrayList<>();
+        for (NegotiationEntity target : EntityList) {
+            if (target.getSalesItem().getUser().getUsername().equals(authentication.getName())) {
+                filteredEntityList.add(target);
+            }
+        }
+        if (!filteredEntityList.isEmpty()){
+            Pageable pageable = PageRequest.of(Math.toIntExact(page), Math.toIntExact(limit));
+            int startIndex = Math.toIntExact(pageable.getOffset());
+            int endIndex = Math.min(startIndex + Math.toIntExact(pageable.getPageSize()), filteredEntityList.size());
+            List<NegotiationEntity> pagedEntityList = filteredEntityList.subList(startIndex, endIndex);
+            List<NegotiationDto> NegotiationDtoList = new ArrayList<>();
+            for (NegotiationEntity target : pagedEntityList) {
+                NegotiationDtoList.add(NegotiationDto.fromEntity(target));
+            }
+            return new PageImpl<>(NegotiationDtoList , pageable, filteredEntityList.size());
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
 
     // 업데이트
     public void update(Long proposalId, NegotiationDto dto, Authentication authentication) {
