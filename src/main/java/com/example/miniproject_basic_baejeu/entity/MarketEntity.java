@@ -3,10 +3,8 @@ package com.example.miniproject_basic_baejeu.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @Data

@@ -7,6 +7,7 @@ import com.example.miniproject_basic_baejeu.entity.UserEntity;
 import com.example.miniproject_basic_baejeu.repository.CommentRepository;
 import com.example.miniproject_basic_baejeu.repository.MarketRepository;
 import com.example.miniproject_basic_baejeu.repository.UserRepository;
+import com.example.miniproject_basic_baejeu.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,14 +32,21 @@ public class CommentService {
         if (optionalMarket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long id = customUserDetails.getId();
+        Optional<UserEntity> optionalUser1 = userRepository.findById(id);
+        UserEntity user1 = optionalUser1.get();
+
         String currentUser = authentication.getName();
         Optional<UserEntity> optionalUser = userRepository.findByUsername(currentUser);
         UserEntity user = optionalUser.get();
+
         MarketEntity marketEntity = optionalMarket.get();
         CommentEntity entity = new CommentEntity();
         entity.setContent(dto.getContent());
         entity.setSalesItem(marketEntity); // 연관된 MarketEntity 설정
-        entity.setUser(user);
+        entity.setUser(user1); // 현재 사용자 등록
         return CommentDto.fromEntity(commentRepository.save(entity));
     }
     public Page<CommentDto> readCommentAll(Long itemId, Long page, Long limit) {

@@ -1,7 +1,5 @@
 package com.example.miniproject_basic_baejeu.config;
 
-
-
 import com.example.miniproject_basic_baejeu.security.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
-
 @Configuration
+
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
+
     public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
     }

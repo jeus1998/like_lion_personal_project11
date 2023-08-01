@@ -5,3 +5,5 @@ DROP TABLE sales_item_comments;
 DROP TABLE sales_item;
 DROP TABLE negotiation;
 DROP TABLE market_entity_comments;
+
+DELETE FROM users where id =2;

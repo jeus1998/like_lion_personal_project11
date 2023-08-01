@@ -19,6 +19,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
+
     @Getter
     private Long id;
     private String username; // 아이디

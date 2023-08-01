@@ -16,7 +16,6 @@ import java.util.Optional;
 /*
 기본적으로 Spring Security가 사용자 정보를 확인하기 위해 사용하는 인터페이스 : UserDetailsService
 UserDetailsService 를 상속받은 인터페이스 -> UserDetailsManager
-
 둘중 무엇을 사용하는지는 동작에 영향 x
 핵심은 loadUserByUsername이(메소드) 정상 동작을 해야함. -> 사용자 인증 과정에서 활용하는 메소드이다.
 
@@ -60,6 +59,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 //        userEntity.setUsername(user.getUsername());
 //        userEntity.setPassword(user.getPassword());
 //        this.userRepository.save(userEntity);
+
+
         try {
             userRepository.save(
                     ((CustomUserDetails) user).newEntity());
@@ -75,7 +76,6 @@ public class JpaUserDetailsManager implements UserDetailsManager {
         log.info("check if user: {} exists", username);
         return this.userRepository.existsByUsername(username);
     }
-    // 얘네는 나중에 해보세요...
     @Override
     public void updateUser(UserDetails user) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);

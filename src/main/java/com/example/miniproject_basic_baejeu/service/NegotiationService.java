@@ -165,5 +165,4 @@ public class NegotiationService {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
-
 }

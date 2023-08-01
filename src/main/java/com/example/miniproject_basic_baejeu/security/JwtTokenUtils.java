@@ -17,6 +17,7 @@ import java.util.Date;
 public class JwtTokenUtils {
     private final Key signingKey;
     private final JwtParser jwtParser;
+    // header body = claims
     public JwtTokenUtils(
             @Value("${jwt.secret}")
             String jwtSecret
@@ -62,7 +63,7 @@ public class JwtTokenUtils {
                 // 사용자 정보 등록
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(3600)));
+                .setExpiration(Date.from(Instant.now().plusSeconds(3600))); // 토큰의 유효시간
 
         return Jwts.builder()
                 .setClaims(jwtClaims)

@@ -1,6 +1,5 @@
 package com.example.miniproject_basic_baejeu.controller;
 
-
 import com.example.miniproject_basic_baejeu.entity.UserEntity;
 import com.example.miniproject_basic_baejeu.repository.UserRepository;
 import com.example.miniproject_basic_baejeu.security.CustomUserDetails;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @Slf4j
@@ -25,6 +23,7 @@ public class UserController {
     // 2. login 페이지에 아이디 비밀번호를 입력한다.
     // 3. 성공하면 my-profile 로 이동한다.
     // my-profile : 아이디(이름) 주소, 전화번호, 이메일
+
     @GetMapping("/login")
     public String loginForm() {
         return "login-form";
@@ -49,6 +48,11 @@ public class UserController {
     @PostMapping("/token")
     @ResponseBody
     public JwtTokenDto makeToken( Authentication authentication){
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        String password = userDetails.getPassword();
+
         String check = authentication.getName();
         UserDetails userDetailsCheck = manager.loadUserByUsername(check);
         String token = jwtTokenUtils.generateToken(userDetailsCheck);
