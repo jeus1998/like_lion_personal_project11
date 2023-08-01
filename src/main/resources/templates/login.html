@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+</head>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<body>
+<h2>로그인</h2>
+<form id="loginForm" action="/users/issue" method="post">
+  <label for="username">아이디:</label>
+  <input type="text" id="username" name="username" required autocomplete="username"><br>
+
+  <label for="password">비밀번호:</label>
+  <input type="password" id="password" name="password" required autocomplete="current-password"><br>
+
+  <input type="submit" value="로그인">
+</form>
+
+<!-- 스크립트를 통해 토큰 저장 및 리다이렉트 처리 -->
+<script>
+  // 폼 제출 후 응답을 받으면 실행되는 함수
+  document.getElementById("loginForm").onsubmit = function(event) {
+    event.preventDefault(); // 기본 폼 제출 동작 막기
+
+    const formData = new FormData(event.target);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    // 폼 데이터를 서버로 전송
+    fetch("/users/issue", {
+      method: "POST",
+      body: new URLSearchParams(formData),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+            .then((response) => {
+              if (response.ok) {
+                response.headers.forEach((value, key) => console.log(`${key}: ${value}`));
+                // 응답 헤더에서 토큰 추출
+                const token = response.headers.get("Authorization").split(" ")[1];
+                console.log(`Token: ${token}`);
+                // 토큰을 localStorage에 저장
+                localStorage.setItem("token", token);
+                // 프로필 페이지로 리다이렉트
+                window.location.href = `/users/profile?token=${token}`;
+              } else {
+                // 로그인 실패 처리
+                console.log("로그인 실패");
+              }
+            })
+            .catch((error) => {
+              console.error("오류 발생: ", error);
+            });
+  };
+</script>
+
+<!-- 회원가입 페이지로 넘어가는 버튼 -->
+<form action="/users/register" method="get">
+  <input type="submit" value="회원가입">
+</form>
+
+</body>
+</html>
