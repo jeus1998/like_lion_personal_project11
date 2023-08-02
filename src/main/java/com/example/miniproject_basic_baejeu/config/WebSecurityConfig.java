@@ -13,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
-
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
 
@@ -21,41 +20,30 @@ public class WebSecurityConfig {
         this.jwtTokenFilter = jwtTokenFilter;
     }
 
-    @Bean  // 메소드의 결과를 Bean 객체로 등록해주는 어노테이션
-    public SecurityFilterChain securityFilterChain(
-            // DI 자동으로 설정됨, 빌더 패턴 처럼 쓴다.
-            HttpSecurity http
-    )
-            throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF: Cross Site Request Forgery
                 .csrf(AbstractHttpConfigurer::disable)
-                // 1. requestMatchers를 통해 설정할 URL 지정
-                // 2. permitAll(), authenticated() 등을 통해 어떤 사용자가
-                //    접근 가능한지 설정
-                .authorizeHttpRequests(
-                        authHttp -> authHttp // HTTP 요청 허가 관련 설정을 하고 싶다.
-                                // requestMatchers == 어떤 URL로 오는 요청에 대하여 설정하는지
-                                // permitAll() == 누가 요청해도 허가한다.
-                                .requestMatchers(
-                                        "/token/issue",
-                                        "/token/register"
-                                )
-                                .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.GET, "/items", "/items/{itemId}", "/items/{itemId}/comments",
-                                        "/users/issue", "/users/register"
-                                ).permitAll()
-                                .requestMatchers(
-                                        HttpMethod.POST,"/users/login", "/users/register"
-                                ).permitAll()
-                                .anyRequest()
-                                .authenticated()
+                .authorizeHttpRequests(authHttp -> authHttp
+                        .requestMatchers(
+                                "/token/issue",
+                                "/token/register",
+                                "/users/main"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET, "/items", "/items/{itemId}", "/items/{itemId}/comments"
+                        ).permitAll()
+                        .requestMatchers(
+                              "/users/issue", "/users/register", "/users/login"
+                        ).anonymous()
+                        .anyRequest()
+                        .authenticated()
                 )
-                .sessionManagement(
+                /*.sessionManagement(
                         sessionManagement -> sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                )*/
                 .addFilterBefore(
                         jwtTokenFilter,
                         AuthorizationFilter.class
@@ -63,12 +51,9 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
     @Bean
-    // 비밀번호 암호화를 위한 Bean
-    public PasswordEncoder passwordEncoder(){
-        // 기본적으로 사용자 비밀번호는 해독가능한 형태로 데이터베이스에
-        // 저장되면 안된다. 그래서 기본적으로 비밀번호를 단방향 암호화 하는
-        // 인코더를 사용한다.
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

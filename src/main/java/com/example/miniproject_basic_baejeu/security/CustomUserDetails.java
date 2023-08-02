@@ -24,11 +24,9 @@ public class CustomUserDetails implements UserDetails {
     private Long id;
     private String username; // 아이디
     private String password; // 비밀번호
-    @Getter
+
     private String address; // 주소
-    @Getter
     private String email; // 이메일
-    @Getter
     private String phone; // 전화번호
 
     @Override
@@ -41,6 +39,9 @@ public class CustomUserDetails implements UserDetails {
         return this.password;
     }
 
+    public String getEmail() { return this.email;}
+    public String getAddress() { return this.address;}
+    public String getPhone() { return this.phone;}
     @Override
     public String getUsername() {
         return this.username;

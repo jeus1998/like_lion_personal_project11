@@ -6,9 +6,14 @@
 </head>
 <body>
 <h2>사용자 프로필</h2>
-<p><strong>사용자명:</strong> ${username}</p>
-<p><strong>이메일:</strong> ${email}</p>
-<p><strong>주소:</strong> ${address}</p>
-<p><strong>전화번호:</strong> ${phone}</p>
+<p> 안녕하세요 사용자 프로필 입니다 </p>
+<button onclick="goToMainPage()">메인 페이지로</button>
+<!-- 자바스크립트 코드 수정 -->
+<script>
+    function goToMainPage() {
+        window.location.href = "/users/main";
+    }
+
+</script>
 </body>
 </html>

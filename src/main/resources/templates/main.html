@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main 페이지</title>
+</head>
+<body>
+<h2>Main 페이지</h2>
+<p>환영합니다!</p>
+<p>원하는 페이지로 이동해보세요.</p>
+<button onclick="goToLoginPage()">로그인 페이지</button>
+<button onclick="goToRegisterPage()">회원가입 페이지</button>
+<button onclick="goToProfilePage()">사용자 프로필 페이지</button>
+
+<script>
+  function goToLoginPage() {
+   location.href = "/users/issue";
+  }
+  function goToRegisterPage() {
+   location.href = "/users/register";
+  }
+  function goToProfilePage() {
+
+    let token = "Bearer " + localStorage.getItem("token");
+    if (token) {
+      alert("토큰이 있습니다!");
+      fetch("/users/profile",{
+        method: "get",
+        headers: {
+          "Authorization": token}
+      })
+              .then((response) => {
+                if (response.ok) {
+                   window.location.href = "/users/profile";
+                } else {
+
+                  alert("프로필 페이지 접근 실패");
+                  throw new Error("프로필 페이지 접근 실패");
+                }
+              })
+              .catch((error) => {
+                console.error("오류 발생: ", error);
+                alert("프로필 페이지 접근 실패: " + error.message);
+              });
+    }
+    else {
+      // 토큰이 없으면 로그인 페이지로 이동합니다.
+      window.location.href = "/users/issue";
+    }
+  }
+</script>
+</body>
+</html>
