@@ -18,8 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
         @RestController
         @RequestMapping("token")
         public class TokenController {
-            // UserDetailsManager: 사용자 정보 회수
-            // PasswordEncoder: 비밀번호 대조용 인코더
             private final UserDetailsManager manager;
             private final PasswordEncoder passwordEncoder;
             private final JwtTokenUtils jwtTokenUtils;

@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "d2f7ec5a-5e61-4efe-97af-3f95a936ac9c",
+		"name": "Project Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28055660"
+	},
+	"item": [
+		{
+			"name": "POST / items",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"아이스크림\",\r\n    \"description\": \"설레임\",\r\n    \"min_price_wanted\": 1000,\r\n    \"writer\": \"배제우5\",\r\n    \"password\": \"jeu\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items"
+			},
+			"response": []
+		},
+		{
+			"name": "GET / items/ {itemsId} 단일 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:1212/items/"
+			},
+			"response": []
+		},
+		{
+			"name": "GET / items 전체 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1212/items?page=1&limit=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1212",
+					"path": [
+						"items"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT / items/{itemsId}/{password}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"아이스크림update\"\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/jeu"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT / items/image/{itemsId}/{password} image 추가",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/user/Desktop/tiger.JPG"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:1212/items/image/1"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE / items/{itemsId}/{password}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:1212/items/5/"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /items/{itemId}/comments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"jeeho.edu\",\r\n    \"password\": \"qwerty1234\",\r\n    \"content\": \"할인 가능하신가요?\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/comments"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /items/{itemId}/comments",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"jeeho.edu\",\r\n    \"password\": \"qwerty1234\",\r\n    \"content\": \"할인 가능하신가요?\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1212/items/5/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1212",
+					"path": [
+						"items",
+						"5",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /items/{itemId}/comments/{commentsId}/{password}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"baejeu\",\r\n    \"password\": \"qwerty12345\",\r\n    \"content\": \"그냥 공짜로 주세요ㅎㅎ\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/3/comments/8/qwerty12345"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /items/{itemId}/comments/{commentsId}/{password}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"jeeho.eduupdate55\",\r\n    \"password\": \"qwerty12345\",\r\n    \"content\": \"할인 가능하신가요? 1000000 정도면 고려 가능합니다\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/comments/8/qwerty12345"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /items/{itemId}/comments/{commentsId}/reply",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"baejeu\",\r\n    \"password\": \"qwerty12345\",\r\n    \"content\": \"그냥 공짜로 주세요ㅎㅎ\",\r\n    \"reply\": \"주인장 댓글 \"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/comments/1/jeu/reply"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /items/{itemId}/proposal",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"baejeu\",\r\n    \"password\": \"jeu1212\",\r\n    \"suggested_price\": 500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/proposal"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /items/{itemId}/proposal  현재 사용자가 올린 협상 전체 조회",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkwNzAxODM1LCJleHAiOjE2OTA3MDU0MzV9.6g9AjhVUKXlt5D75sQ0Nd00GrQs0RYHZVkVaywl9ahFTZ5MQfI_umd9BXo-AWasJyXsBDQM7v31w1KF5NLW5FA"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1212/items/999/proposal?page=0&limit=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1212",
+					"path": [
+						"items",
+						"999",
+						"proposal"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "설명: itemsId는 의미 없다 현재 사용자가 올린 협상글 전체 조",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /items/{itemId}/proposal/owner 현재 사용자가 주인 물품들 제안",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// 아이템 id는 의미없다 (pathvarable) 현재 사용자 ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/999/proposal/owner"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /items/{itemId}/proposal/{proposalId}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"baejeu2\",\r\n    \"password\": \"jeu1212\",\r\n    \"suggested_price\": 800\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/proposal/9"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /items/{itemId}/proposal/{proposalId}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"writer\": \"baejeu\",\r\n    \"password\": \"jeu1212\"\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/items/5/proposal/1"
+			},
+			"response": []
+		},
+		{
+			"name": "POST Form Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "baejeu1213",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "1234",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:1212/users/login"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /token/register / 회원가입",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"baejeu\",\r\n    \"password\": \"jeu1212\",\r\n    \"passwordCheck\": \"jeu1212\",\r\n    \"address\": \"대전\",\r\n    \"email\": \"baejeu@gmail.com\",\r\n    \"phone\": \"010-1234-5678\"\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/token/register"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /token/issue / 로그인: 토큰발행",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"baejeu\",\r\n    \"password\": \"jeu1212\",\r\n    \"passwordCheck\": \"jeu1212\",\r\n    \"address\": \"대전\",\r\n    \"email\": \"baejeu@gmail.com\",\r\n    \"phone\": \"010-1234-5678\"\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/token/register"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /token/issue / 로그인 UserCheck",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNjkwNzc4MTQ5LCJleHAiOjE2OTA3ODE3NDl9.8ACUyE33NqE_KtTk0Q1O7yHuOd-dggaIfkaxw2sWqv83RVludl7TnzQZ5dJOq40NWfZOJRHXTL1jHqNFk64W5A"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"baejeu\",\r\n    \"password\": \"jeu1212\",\r\n    \"passwordCheck\": \"jeu1212\",\r\n    \"address\": \"대전\",\r\n    \"email\": \"baejeu@gmail.com\",\r\n    \"phone\": \"010-1234-5678\"\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:1212/token/check"
+			},
+			"response": []
+		}
+	]
+}

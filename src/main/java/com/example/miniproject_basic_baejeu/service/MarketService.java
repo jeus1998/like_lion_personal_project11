@@ -30,7 +30,6 @@ public class MarketService {
     public MarketDto createMarket(MarketDto dto, Authentication authentication){
         String currentUser = authentication.getName(); // baejeu /user
         Optional<UserEntity> optionalUser = userRepository.findByUsername(currentUser);
-
         UserEntity user = optionalUser.get();
         MarketEntity marketEntity = new MarketEntity();
         marketEntity.setStatus("판매중");

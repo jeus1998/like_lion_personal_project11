@@ -55,11 +55,6 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             return;
             // throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setUsername(user.getUsername());
-//        userEntity.setPassword(user.getPassword());
-//        this.userRepository.save(userEntity);
-
 
         try {
             userRepository.save(

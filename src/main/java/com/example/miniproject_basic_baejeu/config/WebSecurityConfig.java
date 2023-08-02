@@ -32,7 +32,7 @@ public class WebSecurityConfig {
                         .permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, "/items", "/items/{itemId}", "/items/{itemId}/comments"
-                        ).permitAll()
+                        ).anonymous()
                         .requestMatchers(
                               "/users/issue", "/users/register", "/users/login"
                         ).anonymous()
