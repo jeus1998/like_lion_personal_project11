@@ -1,4 +1,4 @@
-# 멋쟁이사자 백엔드 스쿨 5기 ♻️멋사마켓 미니 프로젝트 
+# 멋쟁이사자 백엔드 스쿨 5기 ♻️멋사마켓 미션형[1] 프로젝트
 
 ```
 
@@ -6,281 +6,238 @@
 
 사용자가 중고 물품을 자유롭게 올리고, 댓글을 통해 소통하며, 최종적으로 구매 제안에 대하여 수락할 수 있는 형태의 중고 거래 플랫폼의 백엔드를 만들어봅시다.
 
+```
+
+#### 기존 멋쟁이사자 백엔드 스쿨 5기 미니 프로젝트를 고도화를 하였다. (기존 프젝 링크 첨부)
+
+```
+https://github.com/likelion-backend-5th/MiniProject_Basic_BaeJeWoo
+```
+
+```
+1~3일차 요구사항은 전부 POSTMAN으로 ProjectTest가 가능합니다.
+POSTMAN export 한 파일 이름: Project Test.postman_collection.json
+파일 안에 넣었습니다! 
+```
+#### DAY 1 요구사항 / 인증 만들기
+
+```
+💡 본래 만들었던 서비스에 사용자 인증을 첨부합니다.
+1. 사용자는 회원가입을 진행할 수 있다.
+    - 회원가입에 필요한 정보는 아이디와 비밀번호가 필수이다.
+    - 부수적으로 전화번호, 이메일, 주소 정보를 기입할 수 있다.
+    - 이에 필요한 사용자 Entity는 직접 작성하도록 한다.
+
+2. 아이디 비밀번호를 통해 로그인을 할 수 있어야 한다.
+
+3. 아이디 비밀번호를 통해 로그인에 성공하면, JWT가 발급된다. 이 JWT를 소유하고 있을 경우 인증이 필요한 서비스에 
+   접근이 가능해 진다.
+   - 인증이 필요한 서비스는 추후(미션 후반부) 정의한다.
+
+4. JWT를 받은 서비스는 사용자가 누구인지 사용자 Entity를 기준으로 정확하게 판단할 수 있어야 한다.
+```
+
+#### 1. 인증 만들기 설명
+```
+1. 사용자는 회원가입을 진행할 수 있다.
+
+1) TokenController에서 /token/register로 회원가입 가능하다.   
+UserEntity 에서 @Column(nullable = false, unique = true) 옵션으로 아이디와 비밀번호를 받아줬다.
+
+2) 전화번호, 이메일, 주소 정보를 추가적으로 기입할 수 있게 코드를 추가하였다.
+UserEntity ex) private String address;
+
+JpaUserDetails createUser 메서드 
+createUser(CustomUserDetails.builder().address(dto.getAddress()).email(dto.getEmail())......
+
+2. 아이디 비밀번호를 통해 로그인을 할 수 있어야 한다. 
+TokenController 에서 token/issue 요청으로 로그인이 가능하다.
+JwtRequestDto로 username , password를 받는다. 
+UserDetailsManger의 구현 클레스인 JpaUsersDetailsManager에 있는 
+loadUserByUsername 메서드로 사용자 인증을 한다.
+passwordEncoder.matches 를 사용해서 받아온 password와 userDetils(등록된 사용자)에 있는 password를 비교한다
+notmatches -> throw new ResponseStatusException(HttpStatus.UNAUTHORIZED)
+
+인증 과정을 통과하면 jwtTokenUtils클레스의 generateToken 메서드로 jwt token을 발행하여 응답한다.
+
+3. 아이디 비밀번호를 통해 로그인에 성공하면, JWT가 발급된다. 이 JWT를 소유하고 있을 경우 인증이 필요한 서비스에 
+   접근이 가능해 진다.
+
+로그인, 회원가입 url 과 물품조회, 댓글조회 url 를 제외한 모든 경로는 JWT를 소유해야 접근이 가능하다.
+-> WebSecurityConfig에서 확인 가능하다. 
+
+4. JWT를 받은 서비스는 사용자가 누구인지 사용자 Entity를 기준으로 정확하게 판단할 수 있어야 한다.
+
+-> token/check 요청으로 현재 사용자(username)가 누구인지 확인 가능하게 만들었다.
 
 ```
 
-##### 먼저 체크 해주세요!
+
+#### DAY 2 요구사항 / 관계 설정하기
+
+```
+💡 이전에 만든 물품, 댓글들에 대한 데이터베이스 테이블을, 사용자 정보를 포함하여 고도화 합니다.
+
+ 1. 아이디와 비밀번호를 필요로 했던 테이블들은 실제 사용자 Record에 대응되도록 ERD를 수정하자.
+    - ERD 수정과 함께 해당 정보를 적당히 표현할 수 있도록 Entity를 재작성하자.
+    - 그리고 ORM의 기능을 충실히 사용할 수 있도록 어노테이션을 활용한다.
+ 2. 다른 작성한 Entity도 변경을 진행한다.
+    - 서로 참조하고 있는 테이블 관계가 있다면, 해당 사항이 표현될 수 있도록 Entity를 재작성한다.  
 
 ```
 
-1. 미션 수행하기만 보고 개발을 진행하다가 개발을 끝내고 제출 마감일인 7월 5일에 미션 제출하기 부분을 확인하여 
-   구현해야 하는 기능을 분리하여 이슈 단위로 commit 하지 못하고 한 번에 commit 하였습니다.
-2. 제출 내용에 PR 부분이 선택이고 Pull Requests 개념을 이해 못 해서 하지 않았습니다.
-   이해한다면 추후에 PR 하겠습니다. (7/5 안에)
-3. 모든 요청에 대한 응답은 정상 동작시 endPoints에 맞게 하였고 에러가 발생하면 그에 맞게 throw를 했다.
-4. ERD중 comment에 해당하는 부분을 endPoints와 다르게 url에 password를 실어서 요청하는 방식으로 하였습니다.
-
+#### 2. 관계 설정하기 설명
 ```
-#### DAY 1 / 중고 물품 관리 요구사항
+관계설정은 UserEntiy(사용자) , MarketEntity(물품) , NegotiationEntity(제안), CommentEntity(댓글) 에서 확인 가능하다.
 
-```
-1. 누구든지 중고 거래를 목적으로 물품에 대한 정보를 등록할 수 있다. 
-    1. 이때 반드시 포함되어야 하는 내용은 제목, 설명, 최소 가격, 작성자이다.
-    2. 또한 사용자가 물품을 등록할 때, 비밀번호 항목을 추가해서 등록한다.
-    3. 최초로 물품이 등록될 때, 중고 물품의 상태는 **판매중** 상태가 된다.
-2. 등록된 물품 정보는 누구든지 열람할 수 있다. 
-    1. 페이지 단위 조회가 가능하다.
-    2. 전체 조회, 단일 조회 모두 가능하다.
-3. 등록된 물품 정보는 수정이 가능하다. 
-    1. 이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다.
-4. 등록된 물품 정보에 이미지를 첨부할 수 있다.
-    1. 이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다.
-    2. 이미지를 관리하는 방법은 자율이다.
-5. 등록된 물품 정보는 삭제가 가능하다. 
-    1. 이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다.
+ERD 설명
+
+ 1 :  N
+User -> Market(item), Comment, Negotiation
+
+ 1 :  N
+Market(item) -> Comment, Negotiation
+
+관계 설정 설명
+@OneToMany 와 @ManyToOne 어노테이션을 사용해서 양방향으로 연결하였다.
+옵션은 mappedBy를 사용하였다. 
+mappedBy 옵션은 양방향 연관관계에서 사용한다.
+ex) Market(item) -> Comment
+
+@OneToMany(mappedBy = "salesItem")
+private List<CommentEntity> commentEntityList = new ArrayList<>();
+
+여기서 관계의 주인은 item 이다. 그럼 comment 엔티티는 salesItem을 참조 갖는다.
 
 ```
 
-#### 1. Market (멋사마켓 ERD중 sales_item에 해당) 
-#### MarketController, MarketService, MarketRepository, MarketDto, MarketEntity
-
-1. 물품에 대한 정보를 등록할 수 있다. (반드시 포함되어야 하는 내용은 제목, 설명, 최소가격, 작성자, 비밀번호)
- 
- * @Valid 로 유효성 검사를 하였다. 
- * @NonNull을 MarketEntity에 반드시 포함되어야하는 필드에 붙였다.
- * 최초로 물품이 등록될 때, 물품의 상태 판매중 
- ```java
-  MarketEntity marketEntity = new MarketEntity();
-  marketEntity.setStatus("판매중");
- ```
-2. 등록된 물품 정보는 누구든지 열람할 수 있다.
-
-* 단일 조회
- itemId를 @PathVariable을 통해 받아서 있나 없나 JPA 쿼리 메서드인 findById(id)를 통해 찾고 있으면 해당 내용을 반환했다.
-
-* 전체 조회 ( 페이지 단위 조회 )
-  @RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
-  Page 클레스를 이용해서 페이지를 만들었고 모든 내용을 조회해야하니 findAll 쿼리 메서드를 활용하였다.
-
-3. 등록된 물품 정보는 수정이 가능하다. (이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다)
-#### 기능추가 ( 업데이트 하고 싶은 필드만 업데이트 하도록) 
-
-* itemid를 @PathVariable로 받아서 repository에서 찾는 방식을 활용했다. 
-* MarketDto 타입으로 dto 객체에 비밀번호를 받아오고 equals를 사용한 문자열 비교를 통해서 원래 있던 
-entity 비밀번호와 dto에 있는 비밀번호 즉 (고객이 입력한 비밀번호) 가 틀리면 동작 못하게 throw 했다.
-* endPoints 에서는 업데이트를 위해 모든 필드를 RequestBody를 통해 보냈지만 내 코드는 삼항 연산자를 통해서 업데이트 하고싶은 필드만 업데이트 하도록 하였다. 
-
- 4. 등록된 물품 정보에 이미지를 첨부할 수 있다. (이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다)
-
- * 3번 요구사항에서 사용한 비밀번호 비교 방식을 똑같이 적용하였다.
- * 받아온 이미지는 media 파일 경로에 저장되도록 코드를 작성하였다.
-
-5. 등록된 물품 정보는 삭제가 가능하다.  (이때, 물품이 등록될 때 추가한 비밀번호를 첨부해야 한다)
-
-* 3번,4번 요구사항에서 사용한 비밀번호 비교 방식을 똑같이 적용하였다.
-* and 연산자 && 로 writer또한 올바르게 보내야만 동작하도록 구현하였다.
-* 삭제는 repository 쿼리 메서드인 deleteById를 통해 구현하였다.
-
-#### DAY 2 / 중고 물품 댓글 요구사항
+#### DAY 3 요구사항 / 기능 접근 설정하기
 
 ```
-1. 등록된 물품에 대한 질문을 위하여 댓글을 등록할 수 있다. 
-    1. 이때 반드시 포함되어야 하는 내용은 대상 물품, 댓글 내용, 작성자이다.
-    2. 또한 댓글을 등록할 때, 비밀번호 항목을 추가해서 등록한다.
-2. 등록된 댓글은 누구든지 열람할 수 있다. 
-    1. 페이지 단위 조회가 가능하다.
-3. 등록된 댓글은 수정이 가능하다. 
-    1. 이때, 댓글이 등록될 때 추가한 비밀번호를 첨부해야 한다.
-4. 등록된 댓글은 삭제가 가능하다. 
-    1. 이때, 댓글이 등록될 때 추가한 비밀번호를 첨부해야 한다.
-5. 댓글에는 초기에 비워져 있는 답글 항목이 존재한다. 
-    1. 만약 댓글이 등록된 대상 물품을 등록한 사람일 경우, 물품을 등록할 때 사용한 비밀번호를 첨부할 경우 답글 항목을 수정할 수 있다.
-    2. 답글은 댓글에 포함된 공개 정보이다.
+💡 기능들의 사용 가능 여부가 사용자의 인증 상태에 따라 변동하도록 제작합니다.
+
+ 1. 본래 “누구든지 열람할 수 있다”의 기능 목록은 사용자가 인증하지 않은 상태에서 사용할 수 있도록 한다.
+    - 등록된 물품 정보는 누구든지 열람할 수 있다.
+    - 등록된 댓글은 누구든지 열람할 수 있다.
+    - 기타 기능들
+
+ 2. 작성자와 비밀번호를 포함하는 데이터는 인증된 사용자만 사용할 수 있도록 한다.
+    - 이때 해당하는 기능에 포함되는 아이디 비밀번호 정보는, 1일차에 새로 작성한 사용자 Entity와의 관계로 대체한다.
+        - 물품 정보 등록 → 물품 정보와 사용자 관계 설정
+        - 댓글 등록 → 댓글과 사용자 관계 설정
+        - 기타 등등
+        - 누구든지 중고 거래를 목적으로 물품에 대한 정보를 등록할 수 있다.
+        - 등록된 물품에 대한 질문을 위하여 댓글을 등록할 수 있다.
+        - 등록된 물품에 대하여 구매 제안을 등록할 수 있다.
+        - 기타 기능들
 ```
 
-#### 2. Comment (멋사마켓 ERD중 comment에 해당) 
-#### CommentController, CommentService, CommentRepository, CommentDto, CommentEntity
 
-1. 등록된 물품에 대한 질문을 위하여 댓글을 등록할 수 있다. (반드시 포함되어야 하는 내용은 대상물품, 댓글내용, 작성자, 비밀번호)
+#### 3. 기능 접근 설정하기 설명
 
-* @Valid 로 유효성 검사를 하였다.
-* @NonNull을 CommentEntity에 반드시 포함되어야하는 필드에 붙였다.
+```
+1. 누구든지 열람할 수 있다. -> 인증되지 않은 상태에서 사용할 수 있도록 한다.
+물품정보 전체조회, 단일조회, 댓글 전체조회
+-> webSecurityConfig 
+.requestMatchers(HttpMethod.GET, "/items", "/items/{itemId}", "/items/{itemId}/comments").anonymous()
 
-2. 등록된 댓글은 누구든지 열람할 수 있다. ( 해당 아이템에 대한 모든 댓글 조회 , 페이지 단위 조회)
+2. 작성자와 비밀번호를 포함하는 데이터는 인증된 사용자만 사용할 수 있도록 한다.
+1) market(item), comment, negotiation : 등록(post) 
+모두 현재의 사용자 정보를 가져와서 entity에 관계 설정을 해주었다.
+ex) 물품 등록 
+ public MarketDto createMarket(MarketDto dto, Authentication authentication){
+ Optional<UserEntity> optionalUser = userRepository.findByUsername(currentUser);
+        UserEntity user = optionalUser.get();
+        MarketEntity marketEntity = new MarketEntity();
+        marketEntity.setStatus("판매중");
+        marketEntity.setTitle(dto.getTitle());
+        marketEntity.setDescription(dto.getDescription());
+        marketEntity.setMin_price_wanted(dto.getMin_price_wanted());
+        marketEntity.setUser(user);
+ return MarketDto.fromEntity(marketRepository.save(marketEntity));
+ }
 
-* @RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
-* @PathVariable로 조회 하고 싶은 아이템의 id를 받았다.
-* Page 클레스를 이용해서 페이지를 만들었고 모든 내용을 조회해야하니 findAll 쿼리 메서드를 활용하였다.
-* 모든 Entity를 가져오고 item_id에 해당하는 값들만 찾아내기 위해 새롭게 List<CommentEntity>를 만들고 for each 문을 돌렸다.
-```java
-List<CommentEntity> filteredCommentEntityList = new ArrayList<>();
-        for (CommentEntity comment : commentEntityList) {
-            if (comment.getItem_id() == itemId) {
-                filteredCommentEntityList.add(comment);
-            }
+ 2) market(item), comment, negotiation : 업데이트(put), 삭제(delete)
+ 모두 현재의 사용자 정보와 기존에 등록했던 사용자의 정보를 비교해서 동작하게 만들었다.
+ex) 물품 정보 삭제 
+public void deleteMarket(Long id, Authentication authentication){
+        Optional<MarketEntity> optionalMarket = marketRepository.findById(id);
+        if (optionalMarket.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-```
-* itemId에 맞는 값만 페이징 처리하였다. subList메서드를 활용하였다.
-```java
- int startIndex = Math.toIntExact(pageable.getOffset());
- int endIndex = Math.min(startIndex + Math.toIntExact(pageable.getPageSize()), filteredCommentEntityList.size());
- List<CommentEntity> pagedCommentEntityList = filteredCommentEntityList.subList(startIndex, endIndex);
-```
-* List<CommentEntity> 에서 반환값인 List<CommentDto>로 변환 해주었다. CommentDto의 fromEntity 메서드를 활용하였다.
-* 최종 반환값인 Page<CommentDto>에 맞게 반환
-
-3. 등록된 댓글은 수정이 가능하다.  (이때, 댓글이 등록될 때 추가한 비밀번호를 첨부해야 한다)
-* @PathVariable을 활용해서 url에 password를 실어서 요청을 해서 비밀번호를 받는 방식으로 하였다.
-* endPoints 대로 코드를 구현하면 commentsId만 맞으면 동작이 가능한데 itemId랑 해당 commentsId가 틀린데 동작하는게 이상해서
-  commentId에 해당하는 itemId면 동작하도록 구현하였다.
-  먼저 repository 메서드인 findById로 해당 comment가 있나 확인하였다.
-```java
- if (password.equals(commentEntity.getPassword()) && itemId == commentEntity.getItem_id())
-```
-  password와 itemID가 맞으면 동작 
-
-4. 등록된 댓글은 삭제가 가능하다.  (이때, 댓글이 등록될 때 추가한 비밀번호를 첨부해야 한다)
-* 3번 업데이트와 똑같이 구성하였고 commentId가 존재하고 itemId와 password 가 일치하면 deleteById()메서드를 통해 삭제 하였다.
-
-5. 댓글에는 초기에 비워져 있는 답글 항목이 존재한다. ( 물품을 등록할 때 사용한 비밀번호를 첨부할 경우 답글 항목을 수정할 수 있다.)
-* @PathVariable을 통해서 password를 받았다. @PathVariable을 통해서 commentsId를 받았다. 
-* 먼저 commetsId를 commentRepository.findById() 매개변수로 줘서 해당 comment가 있나 확인하였다.
-* 그에 해당하는 itemId로 marketRepository.findById() 매개변수로 줘서 marketEntity에 값을 저장하였다.
-* 받은 password와 저장되어있는 비밀번호를 비교하였다. 
-* 비밀번호가 맞으면 dto에 실어온 reply를 set하고 틀리면 404error를 throw하였다.
-
-#### DAY 3 / 구매 제안 요구사항
-
-```
-1. 등록된 물품에 대하여 구매 제안을 등록할 수 있다. 
-    1. 이때 반드시 포함되어야 하는 내용은 대상 물품, 제안 가격, 작성자이다.
-    2. 또한 구매 제안을 등록할 때, 비밀번호 항목을 추가해서 등록한다.
-    3. 구매 제안이 등록될 때, 제안의 상태는 제안 상태가 된다.
-2. 구매 제안은 대상 물품의 주인과 등록한 사용자만 조회할 수 있다.
-    1. 대상 물품의 주인은, 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 물품에 등록된 모든 구매 제안이 확인 가능하다. 페이지 기능을 지원한다.
-    2. 등록한 사용자는, 조회를 위해서 자신이 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
-3. 등록된 제안은 수정이 가능하다. 
-    1. 이때, 제안이 등록될때 추가한 **작성자와 비밀번호**를 첨부해야 한다.
-4. 등록된 제안은 삭제가 가능하다. 
-    1. 이때, 제안이 등록될때 추가한 **작성자와 비밀번호**를 첨부해야 한다.
-5. 대상 물품의 주인은 구매 제안을 수락할 수 있다. 
-    1. 이를 위해서 제안의 대상 물품을 등록할 때 사용한 **작성자와 비밀번호**를 첨부해야 한다.
-    2. 이때 구매 제안의 상태는 **수락**이 된다.
-6. 대상 물품의 주인은 구매 제안을 거절할 수 있다. 
-    1. 이를 위해서 제안의 대상 물품을 등록할 때 사용한 **작성자와 비밀번호**를 첨부해야 한다.
-    2. 이때 구매 제안의 상태는 **거절**이 ****된다.
-7. 구매 제안을 등록한 사용자는, 자신이 등록한 제안이 수락 상태일 경우, 구매 확정을 할 수 있다. 
-    1. 이를 위해서 제안을 등록할 때 사용한 **작성자와 비밀번호**를 첨부해야 한다.
-    2. 이때 구매 제안의 상태는 **확정** 상태가 된다.
-    3. 구매 제안이 확정될 경우, 대상 물품의 상태는 **판매 완료**가 된다.
-    4. 구매 제안이 확정될 경우, 확정되지 않은 다른 구매 제안의 상태는 모두 **거절**이 된다.
-```
-
-#### 3. Negotiation (멋사마켓 ERD중 Negotiation에 해당) 
-#### NegotiationController,NegotiationService, NegotiationRepository, NegotiationDto, NegotiationEntity
-
-#### NegotiationRepository에 메서드 생성
-```java
-List<NegotiationEntity> findByPasswordAndWriter(String password, String writer);
-List<NegotiationEntity> findByStatusAndItemId(String status, Long itemId);
-```
-
-1. 등록된 물품에 대하여 구매 제안을 등록할 수 있다. 
-* 반드시 포함되어야하는 부분( 대상 물품, 제안 가격, 작성자, 비밀번호) 
-NegotiationEntity에 대상 물품, 제안가격, 작성자 ,비밀번호 필드를 @NonNull로 지정하고 @RequestBody로 받을 때 @Valid로 유효성 검사를 하였다.
-
-* 구매 제안이 등록될 때, 제안의 상태는 제안 상태가 된다.
-```java
-entity.setStatus("제안 상태");
-```
-
-2. 구매 제안은 대상 물품의 주인과 등록한 사용자만 조회할 수 있다.
-
-* 대상 물품의 주인은 자신의 물품에 대한 모든 제안을 조회가능한다 + 페이지 기능을 지원한다.
-@PathVariable을 통해 해당 itemId를 받았다.
-@RequestBody 를 통해 writer와 password를 받았다.
-@RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
-
-먼저 marketRepository.findById(itemId)를 통해 itemId에 해당하는 값이 있는지 확인했다.
-그러고 나서는 password와 writer를 equals를 통해서 체크 하였다.
-writer와 password를 통과하면 findAll메서드를 통해서 모든 구매제안 entity를 List로 가지고오고 itemId가 일치하는 값들만 리스트에 넣어줬다.
-나머지 구현은 comment에서 페이지 구현방식과 동일하다.
-
-
-* 등록한 사용자는, 조회를 위해서 자신이 사용한 작성자와 비밀번호를 첨부해야 한다. 이때 자신이 등록한 구매 제안만 확인이 가능하다. 페이지 기능을 지원한다.
-@RequestParm으로 writer와 password를 받았다.
-@RequestParam으로 읽고 싶은 page와 limit를 받게 해줬다.
-password와 writer에 해당하는 엔티티 리스트를 가져왔다. 
-```java
- List<NegotiationEntity> EntityList = negotiationRepository.findByPasswordAndWriter(password, writer);
-```
-나머지 페이지 구현방식은 동일하다.
-
-4. 등록된 제안은 삭제가 가능하다. 
-*  이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.
-@PathVariable을 통해서 proposalId (제안 id를 받았다.) 
-@RequestBody를 통해서 작성자와 비밀번호를 받았다.
-먼저 findById를 통해 해당 값이 있나 확인하였다.
-equsls를 통해 password와 writer를 비교하였다. 
-그러고 delete 메서드를 통해 삭제하였다.
-
- 3, 5, 6, 7 같은 경우 모드 같은 요청으로 묶고 같은 메서드에서 동작하게 만들었다.
- @PathVariable 을 통해서 proposalId를 받았다.
- @RequestBody를 통해서 NegotiationdDto dto 로 해당 값들을 저장하게 하였다.
- 응답은 getStatus값에 따라서 다르게 응답하게 만들었다.
- ```java
- ResponseDto response = new ResponseDto();
-        if (dto.getStatus() == null){
-            response.setMessage("제안이 수정되었습니다.");
+        MarketEntity marketEntity = optionalMarket.get();
+        if (authentication.getName().equals(marketEntity.getUser().getUsername())) {
+            marketRepository.deleteById(id);
         }
-        else if ((dto.getStatus().equals("수락")) || (dto.getStatus().equals("거절")) )
-            response.setMessage("제안의 상태가 변경되었습니다.");
-        else if (dto.getStatus().equals("확정"))
-            response.setMessage("구매가 확정되었습니다.");
-```
- 
- 3. 등록된 제안은 수정이 가능하다. ( 이때, 제안이 등록될때 추가한 작성자와 비밀번호를 첨부해야 한다.) 
- 먼저 negotiationRepository.findById(proposalId); 통해서 해당 값이 있나 없나 확인하였다.
- 없으면 throw NOT_FOUND 
- 있으면 equals 메서드로 password와 writer를 비교하고 제안 값만 수정하게 만들었다.
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+  요구사항에 나와 있는 기능들을 전부 넣어주었다.
+  MarketController, MarketService, CommentController, CommentService, NegotiationController, 
+  NegotiationService 코드를 참고 해주세요!
 
- 5. 대상 물품의 주인은 구매 제안을 수락할 수 있다. (이를 위해서 제안의 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
- * 이때 구매 제안의 상태는 수락이 된다.
- 6.  대상 물품의 주인은 구매 제안을 거절할 수 있다.  (이를 위해서 제안의 대상 물품을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
- * 이때 구매 제안의 상태는 거절이 된다.
+```
 
- ```java
- else if (dto.getStatus().equals("수락") || dto.getStatus().equals("거절"))
- ```
-or 연산자로 요청 status가 수락 아니면 거절이면 동작하게 만들었다.
-marketRepository.findById(item_id)를 통해서 물품 등록자의 정보를 가져왔다.
-equals 메서드로 password와 writer를 체크하였다. 
-통과하면 status를 요청한 status로 set하였다.
+#### DAY 4 요구사항 / UI 구현하기
 
-7. 구매 제안을 등록한 사용자는, 자신이 등록한 제안이 수락 상태일 경우, 구매 확정을 할 수 있다. (이를 위해서 제안을 등록할 때 사용한 작성자와 비밀번호를 첨부해야 한다.)
-else if (dto.getStatus().equals("확정")) 요청이 확정이면 동작하게 만들었다.
-equals 메서드로 password와 writer를 체크하였다.
-통과하면 현재 status가 수락 상태인지 확인하였다.
-(negotiationEntity.getStatus().equals("수락"))
-* 이때 구매 제안의 상태는 확정 상태가 된다.
-```java
- negotiationEntity.setStatus("확정");
- NegotiationDto.fromEntity(negotiationRepository.save(negotiationEntity));
 ```
-* 구매 제안이 확정될 경우, 대상 물품의 상태는 판매 완료가 된다.
-```java
- Optional<MarketEntity> marketEntity = marketRepository.findById(item_id);
-                    MarketEntity market = marketEntity.get();
-                    market.setStatus("판매완료");
-                    MarketDto.fromEntity(marketRepository.save(market));
+💡 각 기능을 활용할 수 있는 적절한 UI를 만들어봅시다
+
+ 1. 회원가입 화면을 구성하기 위해 필요한 항목을 생각해보자.
+    - 아이디
+    - 비밀번호
+    - 비밀번호 확인
+    - 연락처 (선택)
+    - 이메일 (선택)
+    - 주소 (선택)
+
+ 2. 로그인 화면을 구성하기 위해 필요한 항목을 생각해보자.
+    - 아이디
+    - 비밀번호
+
+ 3. 기타 화면의 필요한 내용들을 생각해보자.
+    - 물품 정보 조회
+        - 댓글
+        - 댓글 답글
+        - 구매제안
+    - 물품 정보 등록
+    - 구매 제안 목록 확인
+
 ```
-* 구매 제안이 확정될 경우, 확정되지 않은 다른 구매 제안의 상태는 모두 거절이 된다.
-```java
- List<NegotiationEntity> rejectEntity = negotiationRepository.findByStatusAndItemId("제안 상태", item_id);
-                    System.out.println(rejectEntity.size());
-                    for (NegotiationEntity target : rejectEntity) {
-                        target.setStatus("거절");
-                        NegotiationDto.fromEntity(negotiationRepository.save(target));
-                    }
+```markdown
+### 4일차 UI 링크
+
+1. [메인페이지](http://localhost:1212/users/main)
+2. [회원가입](http://localhost:1212/users/register)
+3. [로그인](http://localhost:1212/users/issue)
+4. [프로필 페이지](http://localhost:1212/users/profile) -> 실패.. 
+
 ```
+#### 4. UI 구현하기 설명
+
+```
+src 폴더 밑에 templates 에서 login.html, main.html, profile.html, register.html 을 참고해주세요!
++ UserController를 참고해주세요!
+
+Main page -> login , register 접근 가능하게 button으로 만들었습니다.
+
+Login page -> register, main 접근 가능하게 button으로 만들었습니다.
+아이디, 비밀번호를 입력하면 등록된 회원정보면 로그인 잘못된 정보면 로그인 실패!를 보여주게 만들었습니다.
+-> alert("로그인 실패: " + error.message);
+
+Register page -> login , main 접근 가능하게 button으로 만들었습니다.
+사용자명 : 필수로 입력하게 해줬습니다. 이미 존재하면 가입 X 
+비밀번호, 비밀번호 확인: 둘이 똑같이 입력하지 않으면 가입 X
+전화번호, 주소, 이메일: 필수 정보는 아닙니다 
+
+회원가입 실패하면 서버에서는 log로 확인 가능하지만 Client에게는 실패했다는 사실을 전달하지 못 하였습니다.
+나중에 추가 예정!
+
+지금까지 설명한 부분은 전부 token(jwt)인증을 하지 않아도 접근이 가능한 부분 입니다.
+인증을 해야만 접근이 가능한 요청을 만들어 보려고 했는데 js 지식이 부족해서 실패하였습니다.
+토큰 저장 방식은 localStorage를 사용하였습니다. 
+
+```
+
+## 읽어주셔서 감사합니다!!!
+
 
