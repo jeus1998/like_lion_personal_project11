@@ -35,9 +35,6 @@ import org.springframework.web.server.ResponseStatusException;
             }
             @PostMapping("/issue")
             public JwtTokenDto issueJwt(@RequestBody JwtRequestDto dto) {
-                // 사용자 정보 회수
-                // 로그인 loadUserByUsername
-
                 UserDetails userDetails
                         = manager.loadUserByUsername(dto.getUsername());
 

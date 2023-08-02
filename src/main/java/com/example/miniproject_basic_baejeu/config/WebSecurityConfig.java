@@ -19,7 +19,6 @@ public class WebSecurityConfig {
     public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -40,10 +39,10 @@ public class WebSecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
-                /*.sessionManagement(
+                .sessionManagement(
                         sessionManagement -> sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )*/
+                )
                 .addFilterBefore(
                         jwtTokenFilter,
                         AuthorizationFilter.class
@@ -51,7 +50,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
