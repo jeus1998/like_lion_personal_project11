@@ -1,6 +1,5 @@
 package com.example.miniproject_basic_baejeu.security;
 
-
 import com.example.miniproject_basic_baejeu.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -44,7 +44,6 @@ import org.springframework.web.server.ResponseStatusException;
                 return response;
             }
 
-
             @PostMapping("/register")
             public JwtRegisterDto registerUser(@RequestBody JwtRegisterDto dto){
                 if (dto.getPassword().equals(dto.getPasswordCheck())) {
@@ -59,6 +58,7 @@ import org.springframework.web.server.ResponseStatusException;
                 }
                 return dto;
             }
+
             // 현재 로그인한 User 정보를 확인하기 위한 메서드
             @GetMapping("/check")
             public String checkUser(Authentication authentication){
